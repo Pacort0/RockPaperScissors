@@ -51,14 +51,11 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun juego(modifier: Modifier = Modifier) {
 
-    val imagenInterrogacionJug = R.drawable.interrogation
-    val imagenInterrogacionMaquina = R.drawable.interrogation
-
     var imagenCambianteJug by remember {
-        mutableStateOf(imagenInterrogacionJug)
+        mutableStateOf(R.drawable.interrogation)
     }
     var imagenCambianteMaquina by remember {
-        mutableStateOf(imagenInterrogacionMaquina)
+        mutableStateOf(R.drawable.interrogation)
     }
 
     var puntuacionMaquina by remember {
