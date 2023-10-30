@@ -1,10 +1,9 @@
 package com.example.rockpaperscissors
 
-import android.media.Image
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -26,7 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -52,12 +50,49 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun juego(modifier: Modifier = Modifier) {
-    val imagenPiedra = Image(painter = painterResource(id = R.drawable.piedra), contentDescription = "piedra")
 
-    var puntuacionMaquina = 0
-    var puntuacionJugador = 0
-    var eleccionMaquina = ""
-    var eleccionJugador = ""
+    val imagenInterrogacionJug = R.drawable.interrogation
+    val imagenInterrogacionMaquina = R.drawable.interrogation
+
+    var imagenCambianteJug by remember {
+        mutableStateOf(imagenInterrogacionJug)
+    }
+    var imagenCambianteMaquina by remember {
+        mutableStateOf(imagenInterrogacionMaquina)
+    }
+
+    var puntuacionMaquina by remember {
+        mutableStateOf(0)
+    }
+    var puntuacionJugador by remember {
+        mutableStateOf(0)
+    }
+    var eleccionMaquina by remember {
+        mutableStateOf("")
+    }
+    var eleccionJugador by remember {
+        mutableStateOf("")
+    }
+
+    var armaElegidaJug by remember {
+        mutableStateOf(0)
+    }
+    var armaElegidaMaq by remember {
+        mutableStateOf(0)
+    }
+
+    when (armaElegidaJug){
+        1-> imagenCambianteJug = R.drawable.piedra
+        2-> imagenCambianteJug = R.drawable.paper
+        3-> imagenCambianteJug = R.drawable.tijera
+    }
+
+
+    when (armaElegidaMaq){
+        1-> imagenCambianteMaquina = R.drawable.piedra
+        2-> imagenCambianteMaquina = R.drawable.paper
+        3-> imagenCambianteMaquina = R.drawable.tijera
+    }
 
     val context = LocalContext.current
     Column (
@@ -103,7 +138,7 @@ fun juego(modifier: Modifier = Modifier) {
                     .weight(1f)
                     .fillMaxWidth()
             ){
-               Image(painter = painterResource(id = R.drawable.interrogation), contentDescription = "esperando")
+               Image(painter = painterResource(id = imagenCambianteMaquina), contentDescription = "esperando")
             }
         }
 
@@ -114,9 +149,18 @@ fun juego(modifier: Modifier = Modifier) {
                 .weight(1f)
                 .fillMaxWidth()
         ){
-            Text(text = "Máquina $puntuacionMaquina - $puntuacionJugador Jugador",
-                fontSize = 30.sp
-            )
+            val textoGanador = textoGanador(puntuacionJugador, puntuacionMaquina)
+            if (siganJugando(puntuacionJugador, puntuacionMaquina)){
+                Text(text = "Máquina $puntuacionMaquina - $puntuacionJugador Jugador",
+                    fontSize = 30.sp
+                )
+            } else {
+                Text(text = "Máquina $puntuacionMaquina - $puntuacionJugador Jugador " + "\n" +
+                        "\n" + "Ha ganado $textoGanador",
+                    fontSize = 30.sp
+                )
+            }
+
         }
         Column (
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -133,7 +177,7 @@ fun juego(modifier: Modifier = Modifier) {
                     .fillMaxWidth()
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.interrogation),
+                    painter = painterResource(id = imagenCambianteJug),
                     contentDescription = "esperando"
                 )
             }
@@ -161,26 +205,124 @@ fun juego(modifier: Modifier = Modifier) {
                 contentDescription = "piedra",
                 modifier = Modifier
                     .weight(1F)
-                    .clickable {
+                    .clickable(enabled = siganJugando(puntuacionJugador, puntuacionMaquina)) {
+                        armaElegidaJug = 1
+                        eleccionJugador = "Piedra"
+                        armaElegidaMaq = numeroRandom()
+
+                        eleccionMaquina = textoArmaMaquina(armaElegidaMaq)
+
+                        when (eligeGanador(armaElegidaJug, armaElegidaMaq)) {
+                            0 -> Toast
+                                .makeText(context, "Empate", Toast.LENGTH_SHORT)
+                                .show()
+
+                            1 -> puntuacionMaquina += 1
+                            2 -> puntuacionJugador += 1
+                        }
                     }
             )
             Image(painter = painterResource(id = R.drawable.paper),
                 contentDescription = "papel",
                 modifier = Modifier
                     .weight(1F)
-                    .clickable {
+                    .clickable(enabled = siganJugando(puntuacionJugador, puntuacionMaquina)) {
+                        armaElegidaJug = 2
+                        eleccionJugador = "Papel"
+                        armaElegidaMaq = numeroRandom()
+
+                        eleccionMaquina = textoArmaMaquina(armaElegidaMaq)
+
+                        when (eligeGanador(armaElegidaJug, armaElegidaMaq)) {
+                            0 -> Toast
+                                .makeText(context, "Empate", Toast.LENGTH_SHORT)
+                                .show()
+
+                            1 -> puntuacionJugador += 1
+                            2 -> puntuacionMaquina += 1
+                        }
                     }
             )
             Image(painter = painterResource(id = R.drawable.tijera),
                 contentDescription = "tijeras",
                 modifier = Modifier
                     .weight(1F)
-                    .clickable {
+                    .clickable(enabled = siganJugando(puntuacionJugador, puntuacionMaquina)) {
+                        armaElegidaJug = 3
+                        eleccionJugador = "Tijeras"
+                        armaElegidaMaq = numeroRandom()
+
+                        eleccionMaquina = textoArmaMaquina(armaElegidaMaq)
+
+                        when (eligeGanador(armaElegidaJug, armaElegidaMaq)) {
+                            0 -> Toast
+                                .makeText(context, "Empate", Toast.LENGTH_SHORT)
+                                .show()
+
+                            1 -> puntuacionMaquina += 1
+                            2 -> puntuacionJugador += 1
+                        }
                     }
             )
         }
     }
+}
 
+fun numeroRandom():Int{
+    val numero = Random.nextInt(1,4)
+    return numero
+}
+
+fun eligeGanador(armaJug:Int, armaMaq:Int):Int{
+    var ganador = 0
+
+    when(armaJug){
+        1 -> when (armaMaq){
+            1-> ganador = 0
+            2-> ganador = 1
+            3-> ganador = 2
+        }
+        2 -> when (armaMaq){
+            1-> ganador = 1
+            2-> ganador = 0
+            3-> ganador = 2
+        }
+        3 -> when (armaMaq){
+            1-> ganador = 1
+            2-> ganador = 2
+            3-> ganador = 0
+        }
+    }
+
+    return ganador
+}
+
+fun textoArmaMaquina(armaMaq: Int):String{
+    var eleccionMaquina = ""
+    when(armaMaq){
+        1-> eleccionMaquina = "Piedra"
+        2-> eleccionMaquina = "Papel"
+        3-> eleccionMaquina = "Tijeras"
+    }
+    return eleccionMaquina
+}
+
+fun siganJugando(puntosJug:Int, puntosMaq:Int):Boolean{
+    var siguenJugando = true
+    if (puntosMaq >= 5 || puntosJug >= 5){
+        siguenJugando = false
+    }
+    return siguenJugando
+}
+
+fun textoGanador(puntosJug:Int, puntosMaq:Int):String{
+    var texto = ""
+    if (puntosJug > puntosMaq){
+        texto = "el jugador"
+    } else {
+        texto = "la máquina"
+    }
+    return texto
 }
 
 @Preview(showBackground = true)
@@ -189,21 +331,4 @@ fun juegoPreview() {
     RockPaperScissorsTheme {
         juego()
     }
-}
-
-@Composable
-fun numeroRandom():Int{
-    val numero = Random.nextInt(0,3)
-    return numero
-}
-
-@Composable
-fun armaElegidaMaquina(@DrawableRes img: Int):Unit{
-    var arma = Image(painter = painterResource(id = R.drawable.interrogation), contentDescription = "esperando")
-    when(img){
-        1-> arma = Image(painter = painterResource(id = R.drawable.piedra), contentDescription = "piedra")
-        2-> arma = Image(painter = painterResource(id = R.drawable.paper), contentDescription = "papel")
-        3-> arma = Image(painter = painterResource(id = R.drawable.tijera), contentDescription = "tijeras")
-    }
-    return arma
 }
