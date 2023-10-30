@@ -255,7 +255,6 @@ fun juego(modifier: Modifier = Modifier) {
                             0 -> Toast
                                 .makeText(context, "Empate", Toast.LENGTH_SHORT)
                                 .show()
-
                             1 -> puntuacionMaquina += 1
                             2 -> puntuacionJugador += 1
                         }
