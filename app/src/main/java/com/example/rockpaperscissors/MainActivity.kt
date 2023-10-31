@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,8 +39,7 @@ class MainActivity : ComponentActivity() {
             RockPaperScissorsTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    modifier = Modifier.fillMaxSize()
                 ) {
                     juego() //Llamamos a la función Juego
                 }
@@ -101,9 +101,9 @@ fun juego(modifier: Modifier = Modifier) {
                 .weight(1f) //Le damos un peso de 1 dentro de la columna externa
                 .fillMaxWidth()
         ){//A cada imagen le damos un peso de 1
-            Image(painter = painterResource(id = R.drawable.piedra), contentDescription = "piedra", modifier = Modifier.weight(1F))
-            Image(painter = painterResource(id = R.drawable.paper), contentDescription = "papel", modifier = Modifier.weight(1F))
-            Image(painter = painterResource(id = R.drawable.tijera), contentDescription = "tijeras", modifier = Modifier.weight(1F))
+            Image(painter = painterResource(id = R.drawable.piedra), contentDescription = "piedra", modifier = Modifier.weight(1F).fillMaxSize())
+            Image(painter = painterResource(id = R.drawable.paper), contentDescription = "papel", modifier = Modifier.weight(1F).fillMaxSize())
+            Image(painter = painterResource(id = R.drawable.tijera), contentDescription = "tijeras", modifier = Modifier.weight(1F).fillMaxSize())
         }
         Column ( //Columna que va a almacenar las acciones de la máquina
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -111,6 +111,7 @@ fun juego(modifier: Modifier = Modifier) {
             modifier = modifier
                 .weight(1f) //Le damos un peso de uno dentro de la columna externa
                 .fillMaxHeight()
+                .background(Color.Red)
         ) {
             Row ( //Fila que va a mostrar un texto con la elección de la máquina en cada turno
                 horizontalArrangement = Arrangement.Center,
@@ -140,6 +141,7 @@ fun juego(modifier: Modifier = Modifier) {
             modifier = modifier
                 .weight(1f) //Le damos un peso de 1 dentro de la columna externa
                 .fillMaxWidth()
+                .background(Color.Yellow)
         ){
             //Llamamos a la variable textoGanador para ajustar el texto final al ganador
             val textoGanador = textoGanador(puntuacionJugador, puntuacionMaquina)
@@ -162,6 +164,7 @@ fun juego(modifier: Modifier = Modifier) {
             modifier = modifier
                 .weight(1f) //Le damos un peso de 1 dentro de la columna externa
                 .fillMaxHeight()
+                .background(Color.Red)
         ) {
             Row(  //Fila que va a mostrar una imagen con la elección del jugador
                 horizontalArrangement = Arrangement.Center,
@@ -199,6 +202,7 @@ fun juego(modifier: Modifier = Modifier) {
                 contentDescription = "piedra",
                 modifier = Modifier
                     .weight(1F) // Valor de peso dentro de la fila = 1
+                    .fillMaxSize()
                     //Será clicable mientras no se llegue a 3 puntos
                     .clickable(enabled = siganJugando(puntuacionJugador, puntuacionMaquina)) {
                         armaElegidaJug = 1 //La piedra es el arma 1
@@ -224,6 +228,7 @@ fun juego(modifier: Modifier = Modifier) {
                 contentDescription = "papel",
                 modifier = Modifier
                     .weight(1F) //Valor de peso dentro de la fila = 1
+                    .fillMaxSize()
                     //Cliclable mientras no se llegue a 3 puntos
                     .clickable(enabled = siganJugando(puntuacionJugador, puntuacionMaquina)) {
                         armaElegidaJug = 2 //El papel es el arma 2
@@ -247,6 +252,7 @@ fun juego(modifier: Modifier = Modifier) {
                 contentDescription = "tijeras",
                 modifier = Modifier
                     .weight(1F) //Valor de peso dentro de la fila = 1
+                    .fillMaxSize()
                     .clickable(enabled = siganJugando(puntuacionJugador, puntuacionMaquina)) {
                         armaElegidaJug = 3 //Las tijeras son el arma 3
                         eleccionJugador = "Tijeras"
@@ -289,9 +295,9 @@ fun eligeGanador(armaJug:Int, armaMaq:Int):Int{
             3-> ganador = 2 //Máquina = Tijeras, gana el jugador
         }
         2 -> when (armaMaq){ //Cuando valga 2 (papel)
-            1-> ganador = 1 //Máquina = Piedra, gana la máquina
+            1-> ganador = 2 //Máquina = Piedra, gana la máquina
             2-> ganador = 0 //Máquina = Papel, empate
-            3-> ganador = 2 //Máquina = Tijeras, gana el jugador
+            3-> ganador = 1 //Máquina = Tijeras, gana el jugador
         }
         3 -> when (armaMaq){ //Cuando valga 3 (tijeras)
             1-> ganador = 1 //Máquina = Piedra, gana la máquina
